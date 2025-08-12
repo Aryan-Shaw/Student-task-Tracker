@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Progress Tracker</title>
+    <style>
+        html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0; /* Remove default margin for full coverage */
+  padding: 0; /* Remove default padding for full coverage */
+}
+
+body {
+  background: linear-gradient(-45deg, #118fe2, #e73c7e, #0fbd2c, #1bf1bf); /* Define your gradient colors and angle */
+  background-size: 400% 400%; /* Make the background larger than the body to allow for movement */
+  animation: gradient 15s ease infinite; /* Apply the animation */
+  height: 100vh; /* Ensure the body takes up the full viewport height */
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%; /* Starting position of the gradient */
+  }
+  50% {
+    background-position: 100% 50%; /* Midpoint position of the gradient */
+  }
+  100% {
+    background-position: 0% 50%; /* End position, returning to the start for a loop */
+  }
+}
+
+
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .profile-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .profile-circle {
+            
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            background-image: url("download.jpg");
+            background-size: cover;
+        }
+
+        .profile-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .pp-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(45deg, #ffd89b, #19547b);
+            padding: 10px 20px;
+            border-radius: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .pp-container:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .pp-container:hover .tooltip {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .pp-points {
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .diamond-icon {
+            font-size: 24px;
+            animation: sparkle 2s infinite;
+        }
+
+        .tooltip {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            background: #333;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .beat-animation {
+            animation: beat 0.4s ease-in-out;
+        }
+
+        @keyframes beat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes sparkle {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.1); }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .quote-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 20px 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .quote-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y="50" font-size="80" opacity="0.05">🎓</text></svg>') repeat;
+            background-size: 100px 100px;
+            pointer-events: none;
+        }
+
+        .quote-text {
+            font-size: 18px;
+            line-height: 1.6;
+            color: #555;
+            font-style: italic;
+            position: relative;
+            z-index: 1;
+            margin-bottom: 15px;
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 20px 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .section h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+
+        .add-task-btn {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .add-task-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+        }
+
+        .plus-icon {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .tasks-container {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .task-item {
+            background: linear-gradient(45deg, #f8f9ff, #e8f4fd);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 10px 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border-left: 4px solid #4CAF50;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .task-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .task-description {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .task-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .task-subject {
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-weight: 500;
+        }
+
+        .task-pp {
+            background: linear-gradient(45deg, #ffd89b, #19547b);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-weight: bold;
+        }
+
+        .rewards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .reward-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .reward-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+
+        .reward-title {
+            font-size: 18px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .reward-cost {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ffd89b;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: white;
+            margin: 10% auto;
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            animation: modalAppear 0.3s ease-out;
+        }
+
+        @keyframes modalAppear {
+            from {
+                opacity: 0;
+                transform: scale(0.7);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .modal h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .checkbox-group {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            z-index: 3000;
+            animation: slideInRight 0.5s ease-out;
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .green-tick {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 100px;
+            color: #4CAF50;
+            z-index: 3000;
+            animation: tickAnimation 1s ease-out;
+        }
+
+        @keyframes tickAnimation {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0);
+            }
+            50% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.2);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, #5a6fd8, #6a4190);
+        }
+
+        .footer {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px 0;
+            margin-top: 40px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .footer-text {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .reset-btn {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .reset-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+            background: linear-gradient(45deg, #ff5252, #d32f2f);
+        }
+
+        .reset-icon {
+            font-size: 16px;
+        }
+
+        .reward-item {
+            background: linear-gradient(45deg, #e8f5e8, #f0f8f0);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 10px 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border-left: 4px solid #ff6b6b;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .reward-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .reward-description {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .reward-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .reward-pp-cost {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-weight: bold;
+        }
+
+        .reward-timestamp {
+            color: #888;
+            font-size: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="profile-section">
+            <div class="profile-circle">IIT</div>
+            <div class="profile-name">Aryan Shaw</div>
+        </div>
+        <div class="logo">BACKLOG NO PROBLEM</div>
+        <div class="pp-container" id="ppContainer">
+            <span class="pp-points" id="ppPoints">0</span>
+            <span>PP</span>
+            <span class="diamond-icon">💎</span>
+            <div class="tooltip">Progress Points</div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="quote-section">
+            <div class="quote-text">"If you want to get rid of a big problem then focus on only a part of it, complete that part and move to the next."</div>
+            <div class="quote-text">"Success is not final, failure is not fatal: it is the courage to continue that counts."</div>
+            <div class="quote-text">"The expert in anything was once a beginner."</div>
+            <div class="quote-text">"IIT is not just a destination, it's a journey of determination and hard work."</div>
+            <div class="quote-text">"Every solved problem is a step closer to your IIT dream."</div>
+        </div>
+
+        <div class="section">
+            <h1>Create a Task Here</h1>
+            <button class="add-task-btn" id="addTaskBtn">
+                <span class="plus-icon">+</span>
+                Add Task
+            </button>
+        </div>
+
+        <div class="section">
+            <h1>Tasks Completed</h1>
+            <div class="tasks-container" id="tasksContainer">
+                <!-- Tasks will be dynamically added here -->
+            </div>
+        </div>
+
+        <div class="section">
+            <h1>Rewards</h1>
+            <div class="rewards-grid">
+                <div class="reward-card" data-cost="200" data-name="1 hour messcraft">
+                    <div class="reward-title">1 Hour Messcraft</div>
+                    <div class="reward-cost">200 PP</div>
+                </div>
+                <div class="reward-card" data-cost="300" data-name="10 chess matches">
+                    <div class="reward-title">10 Chess Matches</div>
+                    <div class="reward-cost">300 PP</div>
+                </div>
+                <div class="reward-card" data-cost="30" data-name="2 chess matches">
+                    <div class="reward-title">2 Chess Matches</div>
+                    <div class="reward-cost">30 PP</div>
+                </div>
+                <div class="reward-card" data-cost="15" data-name="1 chess match">
+                    <div class="reward-title">1 Chess Match</div>
+                    <div class="reward-cost">15 PP</div>
+                </div>
+                <div class="reward-card" data-cost="400" data-name="1 mega evolution in laptop">
+                    <div class="reward-title">1 Mega Evolution (Laptop)</div>
+                    <div class="reward-cost">400 PP</div>
+                </div>
+                <div class="reward-card" data-cost="200" data-name="1 mega evolution">
+                    <div class="reward-title">1 Mega Evolution</div>
+                    <div class="reward-cost">200 PP</div>
+                </div>
+                <div class="reward-card" data-cost="400" data-name="2 hours yt">
+                    <div class="reward-title">2 Hours YouTube</div>
+                    <div class="reward-cost">400 PP</div>
+                </div>
+                <div class="reward-card" data-cost="600" data-name="anime videos">
+                    <div class="reward-title">Anime Videos</div>
+                    <div class="reward-cost">600 PP</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h1>Rewards Claimed</h1>
+            <div class="tasks-container" id="rewardsContainer">
+                <!-- Claimed rewards will be dynamically added here -->
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-text">
+                <p>&copy; Student Progress Tracker - Keep grinding towards your IIT dream! 🎯</p>
+            </div>
+            <button class="reset-btn" id="resetBtn">
+                <span class="reset-icon">🔄</span>
+                Reset All Data
+            </button>
+        </div>
+    </footer>
+
+    <!-- Task Creation Modal -->
+    <div id="taskModal" class="modal">
+        <div class="modal-content">
+            <h2>Add New Task</h2>
+            <form id="taskForm">
+                <div class="form-group">
+                    <label for="taskDescription">Task Description</label>
+                    <textarea id="taskDescription" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="taskCategory">Category</label>
+                    <select id="taskCategory" required>
+                        <option value="">Select Category</option>
+                        <option value="lecture">Lecture</option>
+                        <option value="dpp">DPP</option>
+                        <option value="diby">DIBY</option>
+                        <option value="kpp">KPP</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="taskSubject">Subject</label>
+                    <input type="text" id="taskSubject" required>
+                </div>
+                <div class="form-group hidden" id="dppGroup">
+                    <label>DPP Completion</label>
+                    <div class="checkbox-group">
+                        <label><input type="radio" name="dppCompletion" value="250"> Full (250 PP)</label>
+                        <label><input type="radio" name="dppCompletion" value="125"> Half (125 PP)</label>
+                    </div>
+                </div>
+                <div class="form-group hidden" id="questionGroup">
+                    <label for="questionCount">Number of Questions</label>
+                    <input type="number" id="questionCount" min="1">
+                </div>
+                <div style="text-align: center;">
+                    <button type="submit" class="btn">Add Task</button>
+                    <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Reward Confirmation Modal -->
+    <div id="rewardModal" class="modal">
+        <div class="modal-content">
+            <h2>Confirm Reward</h2>
+            <p id="rewardText">Are you sure you want to use <span id="rewardCost"></span> PP?</p>
+            <div style="text-align: center; margin-top: 20px;">
+                <button id="confirmReward" class="btn">Yes</button>
+                <button id="cancelReward" class="btn btn-secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reset Confirmation Modal -->
+    <div id="resetModal" class="modal">
+        <div class="modal-content">
+            <h2>⚠️ Reset All Data</h2>
+            <p style="margin: 20px 0; color: #666;">Are you sure you want to reset all data? This will permanently delete:</p>
+            <ul style="margin: 20px 0; color: #666; text-align: left;">
+                <li>All Progress Points (PP)</li>
+                <li>All completed tasks</li>
+                <li>All claimed rewards</li>
+                <li>Monthly reset timer</li>
+            </ul>
+            <p style="color: #ff6b6b; font-weight: bold;">This action cannot be undone!</p>
+            <div style="text-align: center; margin-top: 30px;">
+                <button id="confirmReset" class="btn" style="background: linear-gradient(45deg, #ff6b6b, #ee5a52);">Yes, Reset Everything</button>
+                <button id="cancelReset" class="btn btn-secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class StudentTracker {
+            constructor() {
+                this.pp = parseInt(localStorage.getItem('studentPP') || '0');
+                this.tasks = JSON.parse(localStorage.getItem('studentTasks') || '[]');
+                this.claimedRewards = JSON.parse(localStorage.getItem('claimedRewards') || '[]');
+                this.lastReset = localStorage.getItem('lastReset') || new Date().toISOString();
+                this.init();
+            }
+
+            init() {
+                this.checkMonthlyReset();
+                this.updatePPDisplay();
+                this.renderTasks();
+                this.renderClaimedRewards();
+                this.bindEvents();
+            }
+
+            checkMonthlyReset() {
+                const now = new Date();
+                const lastReset = new Date(this.lastReset);
+                const daysDiff = (now - lastReset) / (1000 * 60 * 60 * 24);
+                
+                if (daysDiff >= 30) {
+                    this.pp = 0;
+                    this.tasks = [];
+                    this.claimedRewards = [];
+                    this.lastReset = now.toISOString();
+                    this.saveData();
+                    this.showNotification('Monthly reset completed! Your PP has been reset to 0.');
+                }
+            }
+
+            bindEvents() {
+                document.getElementById('addTaskBtn').addEventListener('click', () => {
+                    this.showTaskModal();
+                });
+
+                document.getElementById('cancelBtn').addEventListener('click', () => {
+                    this.hideTaskModal();
+                });
+
+                document.getElementById('taskForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.addTask();
+                });
+
+                document.getElementById('taskCategory').addEventListener('change', (e) => {
+                    this.toggleCategoryFields(e.target.value);
+                });
+
+                document.querySelectorAll('.reward-card').forEach(card => {
+                    card.addEventListener('click', () => {
+                        const cost = parseInt(card.dataset.cost);
+                        const name = card.dataset.name;
+                        this.showRewardModal(cost, name);
+                    });
+                });
+
+                document.getElementById('confirmReward').addEventListener('click', () => {
+                    this.claimReward();
+                });
+
+                document.getElementById('cancelReward').addEventListener('click', () => {
+                    this.hideRewardModal();
+                });
+
+                document.getElementById('resetBtn').addEventListener('click', () => {
+                    this.showResetModal();
+                });
+
+                document.getElementById('confirmReset').addEventListener('click', () => {
+                    this.resetAllData();
+                });
+
+                document.getElementById('cancelReset').addEventListener('click', () => {
+                    this.hideResetModal();
+                });
+
+                // Close modals when clicking outside
+                window.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('modal')) {
+                        e.target.style.display = 'none';
+                    }
+                });
+            }
+
+            showTaskModal() {
+                document.getElementById('taskModal').style.display = 'block';
+                document.getElementById('taskForm').reset();
+                this.toggleCategoryFields('');
+            }
+
+            hideTaskModal() {
+                document.getElementById('taskModal').style.display = 'none';
+            }
+
+            toggleCategoryFields(category) {
+                const dppGroup = document.getElementById('dppGroup');
+                const questionGroup = document.getElementById('questionGroup');
+                
+                dppGroup.classList.add('hidden');
+                questionGroup.classList.add('hidden');
+
+                if (category === 'dpp') {
+                    dppGroup.classList.remove('hidden');
+                } else if (category === 'diby' || category === 'kpp') {
+                    questionGroup.classList.remove('hidden');
+                }
+            }
+
+            addTask() {
+                const description = document.getElementById('taskDescription').value;
+                const category = document.getElementById('taskCategory').value;
+                const subject = document.getElementById('taskSubject').value;
+                
+                let ppGained = 0;
+
+                switch (category) {
+                    case 'lecture':
+                        ppGained = 100;
+                        break;
+                    case 'dpp':
+                        const dppCompletion = document.querySelector('input[name="dppCompletion"]:checked');
+                        if (dppCompletion) {
+                            ppGained = parseInt(dppCompletion.value);
+                        }
+                        break;
+                    case 'diby':
+                        const dibyQuestions = parseInt(document.getElementById('questionCount').value || '0');
+                        ppGained = dibyQuestions * 40;
+                        break;
+                    case 'kpp':
+                        const kppQuestions = parseInt(document.getElementById('questionCount').value || '0');
+                        ppGained = kppQuestions * 20;
+                        break;
+                }
+
+                const task = {
+                    id: Date.now(),
+                    description,
+                    category,
+                    subject,
+                    ppGained,
+                    timestamp: new Date().toISOString()
+                };
+
+                this.tasks.unshift(task);
+                if (this.tasks.length > 100) {
+                    this.tasks = this.tasks.slice(0, 100);
+                }
+
+                this.pp += ppGained;
+                this.saveData();
+                this.updatePPDisplay();
+                this.renderTasks();
+                this.hideTaskModal();
+                this.showNotification(`Task completed! +${ppGained} PP gained!`);
+                this.animatePPGain();
+                this.showGreenTick();
+            }
+
+            renderTasks() {
+                const container = document.getElementById('tasksContainer');
+                container.innerHTML = '';
+
+                if (this.tasks.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; color: #666;">No tasks completed yet. Start adding tasks to earn PP!</p>';
+                    return;
+                }
+
+                this.tasks.forEach(task => {
+                    const taskElement = document.createElement('div');
+                    taskElement.className = 'task-item';
+                    taskElement.innerHTML = `
+                        <div class="task-description">${task.description}</div>
+                        <div class="task-meta">
+                            <span class="task-subject">${task.subject}</span>
+                            <span class="task-category" style="background: #28a745; color: white; padding: 4px 12px; border-radius: 12px;">${task.category.toUpperCase()}</span>
+                            <span class="task-pp">+${task.ppGained} PP</span>
+                        </div>
+                    `;
+                    container.appendChild(taskElement);
+                });
+            }
+
+            showRewardModal(cost, name) {
+                if (this.pp < cost) {
+                    this.showNotification('Not enough PP to claim this reward!');
+                    return;
+                }
+
+                document.getElementById('rewardCost').textContent = `${cost}`;
+                document.getElementById('rewardText').innerHTML = `Are you sure you want to use <strong>${cost} PP</strong> for <strong>${name}</strong>?`;
+                document.getElementById('rewardModal').style.display = 'block';
+                this.currentRewardCost = cost;
+                this.currentRewardName = name;
+            }
+
+            hideRewardModal() {
+                document.getElementById('rewardModal').style.display = 'none';
+            }
+
+            claimReward() {
+                if (this.pp >= this.currentRewardCost) {
+                    this.pp -= this.currentRewardCost;
+                    
+                    // Add to claimed rewards history
+                    const claimedReward = {
+                        id: Date.now(),
+                        name: this.currentRewardName,
+                        cost: this.currentRewardCost,
+                        timestamp: new Date().toISOString()
+                    };
+                    
+                    this.claimedRewards.unshift(claimedReward);
+                    if (this.claimedRewards.length > 100) {
+                        this.claimedRewards = this.claimedRewards.slice(0, 100);
+                    }
+                    
+                    this.saveData();
+                    this.updatePPDisplay();
+                    this.renderClaimedRewards();
+                    this.showNotification('Reward claimed successfully!');
+                    this.hideRewardModal();
+                }
+            }
+
+            renderClaimedRewards() {
+                const container = document.getElementById('rewardsContainer');
+                container.innerHTML = '';
+
+                if (this.claimedRewards.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; color: #666;">No rewards claimed yet. Complete tasks to earn PP and claim rewards!</p>';
+                    return;
+                }
+
+                this.claimedRewards.forEach(reward => {
+                    const rewardElement = document.createElement('div');
+                    rewardElement.className = 'reward-item';
+                    const date = new Date(reward.timestamp).toLocaleDateString();
+                    const time = new Date(reward.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                    
+                    rewardElement.innerHTML = `
+                        <div class="reward-description">${reward.name}</div>
+                        <div class="reward-meta">
+                            <span class="reward-timestamp">${date} at ${time}</span>
+                            <span class="reward-pp-cost">${reward.cost} PP</span>
+                        </div>
+                    `;
+                    container.appendChild(rewardElement);
+                });
+            }
+
+            showResetModal() {
+                document.getElementById('resetModal').style.display = 'block';
+            }
+
+            hideResetModal() {
+                document.getElementById('resetModal').style.display = 'none';
+            }
+
+            resetAllData() {
+                // Clear all data
+                this.pp = 0;
+                this.tasks = [];
+                this.claimedRewards = [];
+                this.lastReset = new Date().toISOString();
+                
+                // Clear localStorage
+                localStorage.removeItem('studentPP');
+                localStorage.removeItem('studentTasks');
+                localStorage.removeItem('claimedRewards');
+                localStorage.removeItem('lastReset');
+                
+                // Update display
+                this.updatePPDisplay();
+                this.renderTasks();
+                this.renderClaimedRewards();
+                this.hideResetModal();
+                
+                this.showNotification('All data has been reset successfully!');
+            }
+
+            updatePPDisplay() {
+                document.getElementById('ppPoints').textContent = this.pp;
+            }
+
+            animatePPGain() {
+                const ppContainer = document.getElementById('ppContainer');
+                let beatCount = 0;
+                const beatInterval = setInterval(() => {
+                    ppContainer.classList.add('beat-animation');
+                    setTimeout(() => {
+                        ppContainer.classList.remove('beat-animation');
+                    }, 400);
+                    
+                    beatCount++;
+                    if (beatCount >= 12) { // 5 seconds with 400ms delay
+                        clearInterval(beatInterval);
+                    }
+                }, 400);
+            }
+
+            showGreenTick() {
+                const tick = document.createElement('div');
+                tick.className = 'green-tick';
+                tick.innerHTML = '✓';
+                document.body.appendChild(tick);
+
+                setTimeout(() => {
+                    document.body.removeChild(tick);
+                }, 1000);
+            }
+
+            showNotification(message) {
+                const notification = document.createElement('div');
+                notification.className = 'notification';
+                notification.textContent = message;
+                document.body.appendChild(notification);
+
+                setTimeout(() => {
+                    if (document.body.contains(notification)) {
+                        document.body.removeChild(notification);
+                    }
+                }, 3000);
+            }
+
+            saveData() {
+                localStorage.setItem('studentPP', this.pp.toString());
+                localStorage.setItem('studentTasks', JSON.stringify(this.tasks));
+                localStorage.setItem('claimedRewards', JSON.stringify(this.claimedRewards));
+                localStorage.setItem('lastReset', this.lastReset);
+            }
+        }
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', () => {
+            new StudentTracker();
+        });
+    </script>
+</body>
+</html>
